@@ -1,28 +1,40 @@
 #ifndef dynstr_h_
 #define dynstr_h_
 
-#define DYNSTR_INITLEN 1
+#define DYNSTR_INITSIZE 32
+#define DYNSTR_BLOCKSIZE 4096
+#define DYNSTR_NEWSIZE(oldsize) ((oldsize) > DYNSTR_BLOCKSIZE)? \
+                                ((oldsize) + DYNSTR_BLOCKSIZE): \
+                                ((oldsize) << 1)
 
-struct dynstr_t
-{
-  char *elem;
-  int size;
-  int len;
+struct dynstr_t {
+	char *str;
+	size_t size;
+	size_t len;
 };
 
 void
-dynstr_init(struct dynstr_t*);
+dynstr_init(struct dynstr_t *);
+
 void
-dynstr_free(struct dynstr_t*);
+dynstr_free(struct dynstr_t *);
+
 void
-dynstr_setEmpty(struct dynstr_t*);
+dynstr_set_empty(struct dynstr_t *);
+
 void
-dynstr_add(struct dynstr_t*, char);
+dynstr_add(struct dynstr_t *, char);
+
 void
-dynstr_concat(struct dynstr_t*, char*);
+dynstr_concat(struct dynstr_t *, const char *);
+
 void
-dynstr_optSize(struct dynstr_t*);
+dynstr_optsize(struct dynstr_t *);
+
 char*
-dynstr_getSubStr(struct dynstr_t*, int, int);
+dynstr_str_new(struct dynstr_t *);
+
+char*
+dynstr_substr_new(struct dynstr_t *, size_t, size_t);
 
 #endif /* dynstr_h_ */
