@@ -1,88 +1,96 @@
 #include <stdlib.h>
 #include "dynarr.h"
 
-#define DYNARR_MIN(x, y) (x < y)? x: y
 
 void
-dynarr_freeNone(void *e)
+dynarr_free_none(void *e)
 {
-  /* nieko */
+	/* do not free anything */
 }
+
 
 void
-dynarr_init(struct dynarr_t *arr)
+dynarr_init(struct dynarr_t *darr)
 {
-  if (arr == NULL)
-    return;
-  arr->size = DYNARR_INITLEN+1;
-  arr->elem = (void**) malloc((arr->size)*sizeof(void*));
-  arr->len = 0;
-  arr->elem[0] = NULL;
-  arr->free = &dynarr_freeNone;
+	if (darr == NULL)
+		return;
+	darr->size = DYNARR_INITSIZE;
+	darr->arr = malloc(darr->size * sizeof(void*));
+	darr->len = 0;
+	darr->arr[0] = NULL;
+	darr->free = &dynarr_free_none;
 }
+
 
 void
-dynarr_free(struct dynarr_t *arr)
+dynarr_free(struct dynarr_t *darr)
 {
-  int i;
-  if (arr == NULL)
-    return;
-  if (arr->free != NULL)
-    for (i=0; i<arr->len; ++i)
-      arr->free(arr->elem[i]);
-  free(arr->elem);
+	size_t i;
+
+	if (darr == NULL)
+		return;
+	for (i = 0; i < darr->len; ++i)
+		darr->free(darr->arr[i]);
+	free(darr->arr);
 }
+
 
 void
-dynarr_add(struct dynarr_t *arr, void *e)
+dynarr_clean(struct dynarr_t *darr)
 {
-  arr->elem[(arr->len)++] = e;
-  if (arr->len == arr->size)
-  {
-    arr->size = DYNARR_MIN((arr->size)<<1, (arr->size)+1024);
-    arr->elem = (void**) realloc(arr->elem, (arr->size)*sizeof(void*));
-  }
-  arr->elem[arr->len] = NULL;
+	while (darr->len > 0)
+		darr->free(darr->arr[--(darr->len)]);
+	darr->arr[0] = NULL;
 }
+
 
 void
-dynarr_concat(struct dynarr_t *arr, void **e)
+dynarr_set_empty(struct dynarr_t *darr)
 {
-  int i;
-  if (e != NULL)
-    for (i=0; e[i]!=NULL; ++i)
-      dynarr_add(arr, e[i]);
+	darr->len = 0;
+	darr->arr[0] = NULL;
 }
 
-int
-dynarr_find(struct dynarr_t *arr, void *e)
-{
-  int i;
-  for (i=0; i<arr->len; ++i)
-    if (arr->elem[i] == e)
-      return(i);
-  return(-1);
-}
 
 void
-dynarr_clean(struct dynarr_t *arr)
+dynarr_add(struct dynarr_t *darr, void *e)
 {
-  if (arr->free != NULL)
-    while (arr->len > 0)
-      arr->free(arr->elem[--(arr->len)]);
-  arr->elem[0] = NULL;
+	darr->arr[(darr->len)++] = e;
+	if (darr->len == darr->size) {
+		darr->size = DYNARR_NEWSIZE(darr->size);
+		darr->arr = realloc(darr->arr, darr->size * sizeof(void*));
+	}
+	darr->arr[darr->len] = NULL;
 }
 
-void
-dynarr_setEmpty(struct dynarr_t *arr)
-{
-  arr->len = 0;
-  arr->elem[0] = NULL;
-}
 
 void
-dynarr_optSize(struct dynarr_t *arr)
+dynarr_concat(struct dynarr_t *darr, void **e)
 {
-  arr->size = arr->len+1;
-  arr->elem = (void**) realloc(arr->elem, (arr->size)*sizeof(void*));
+	size_t i;
+
+	if (e == NULL)
+		return;
+	for (i = 0; e[i] != NULL; ++i)
+		dynarr_add(darr, e[i]);
+}
+
+
+ssize_t
+dynarr_find(struct dynarr_t *darr, void *e)
+{
+	size_t i;
+
+	for (i = 0; i < darr->len; ++i)
+		if (darr->arr[i] == e)
+			return i;
+	return -1;
+}
+
+
+void
+dynarr_optsize(struct dynarr_t *darr)
+{
+	darr->size = darr->len + 1;
+	darr->arr = realloc(darr->arr, darr->size * sizeof(void*));
 }

@@ -1,31 +1,44 @@
 #ifndef dynarr_h_
 #define dynarr_h_
 
-#define DYNARR_INITLEN 1
+#define DYNARR_INITSIZE 16
+#define DYNARR_BLOCKSIZE 1024
+#define DYNARR_NEWSIZE(oldsize) ((oldsize) > DYNARR_BLOCKSIZE)? \
+                                ((oldsize) + DYNARR_BLOCKSIZE): \
+                                ((oldsize) << 1)
 
-struct dynarr_t
-{
-  void **elem;
-  int size;
-  int len;
-  void (*free)(void*);
+struct dynarr_t {
+	void **arr;
+	size_t size;
+	size_t len;
+	void (*free)(void *);
 };
 
 void
-dynarr_init(struct dynarr_t*);
+dynarr_init(struct dynarr_t *);
+
 void
-dynarr_free(struct dynarr_t*);
+dynarr_free(struct dynarr_t *);
+
 void
-dynarr_add(struct dynarr_t*, void*);
+dynarr_clean(struct dynarr_t *);
+
 void
-dynarr_concat(struct dynarr_t*, void**);
-int
-dynarr_find(struct dynarr_t*, void*);
+dynarr_set_empty(struct dynarr_t *);
+
 void
-dynarr_clean(struct dynarr_t*);
+dynarr_add(struct dynarr_t *, void *);
+
 void
-dynarr_setEmpty(struct dynarr_t*);
+dynarr_concat(struct dynarr_t *, void **);
+
+ssize_t
+dynarr_find(struct dynarr_t *, void *);
+
 void
-dynarr_optSize(struct dynarr_t*);
+dynarr_optsize(struct dynarr_t *);
+
+void
+dynarr_free_none(void *);
 
 #endif /* dynarr_h_ */
