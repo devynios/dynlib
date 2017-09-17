@@ -23,7 +23,7 @@ struct dynhash_elem {
 };
 
 struct dynhash {
-	struct dynhash_elem *arr;
+	struct dynhash_elem **arr;
 	size_t size;
 	size_t len;
 	long (*hash)(const void *);
