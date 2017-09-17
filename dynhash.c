@@ -3,10 +3,10 @@
 #include "dynhash.h"
 
 
-unsigned
+unsigned long
 dynhash_hash_jenkins(const char *key)
 {
-	unsigned h = 0;
+	unsigned long h = 0;
 	size_t i;
 
 	for (i = 0; key[i] != '\0'; ++i) {
@@ -21,34 +21,34 @@ dynhash_hash_jenkins(const char *key)
 }
 
 
-unsigned
+unsigned long
 dynhash_hash_djb(const char *key)
 {
-	unsigned h = 5381;
+	unsigned long h = 5381;
 	size_t i;
 
 	for (i = 0; key[i] != '\0'; ++i)
-		h = ((h << 5) + h) + (unsigned) key[i];
+		h = ((h << 5) + h) + (unsigned char) key[i];
 	return h;
 }
 
 
-unsigned
+unsigned long
 dynhash_hash_sdbm(const char *key)
 {
-	unsigned h = 0;
+	unsigned long h = 0;
 	size_t i;
 
 	for (i = 0; key[i] != '\0'; ++i)
-		h = ((h << 6) + (h << 16) + (unsigned) key[i]) - h;
+		h = ((h << 6) + (h << 16) + (unsigned char) key[i]) - h;
 	return h;
 }
 
 
-unsigned
+unsigned long
 dynhash_hash_kr(const char *key)
 {
-	unsigned h = 0;
+	unsigned long h = 0;
 	size_t i;
 
 	for (i = 0; key[i] != '\0'; ++i)
@@ -123,7 +123,7 @@ dynhash_resize(struct dynhash *dh, size_t size)
 void
 dynhash_add(struct dynhash *dh, void *key, void *val)
 {
-	unsigned h = dh->hash(key);
+	unsigned long h = dh->hash(key);
 	size_t i;
 	struct dynhash_elem *e;
 
@@ -149,7 +149,7 @@ dynhash_add(struct dynhash *dh, void *key, void *val)
 void *
 dynhash_get_val(struct dynhash *dh, const void *key)
 {
-	unsigned h;
+	unsigned long h;
 	size_t i;
 	struct dynhash_elem *e;
 

@@ -6,20 +6,20 @@
 #define DYNHASH_RESIZE_NEEDED(dh) ((dh)->size / ((dh)->size - (dh)->len) >= 3)
 
 
-unsigned
+unsigned long
 dynhash_hash_jenkins(const char *);
 
-unsigned
+unsigned long
 dynhash_hash_djb(const char *);
 
-unsigned
+unsigned long
 dynhash_hash_sdbm(const char *);
 
 
 struct dynhash_elem {
 	void *key;
 	void *val;
-	unsigned hash;
+	unsigned long hash;
 };
 
 struct dynhash {
