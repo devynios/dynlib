@@ -1,6 +1,8 @@
 #ifndef dynarr_h_
 #define dynarr_h_
 
+#include <sys/types.h>
+
 #define DYNARR_INITSIZE 16
 #define DYNARR_BLOCKSIZE 1024
 #define DYNARR_NEWSIZE(oldsize) ((oldsize) > DYNARR_BLOCKSIZE)? \
