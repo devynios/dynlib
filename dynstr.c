@@ -3,7 +3,7 @@
 
 
 void
-dynstr_init(struct dynstr_t *dstr)
+dynstr_init(struct dynstr *dstr)
 {
 	if (dstr == NULL)
 		return;
@@ -15,7 +15,7 @@ dynstr_init(struct dynstr_t *dstr)
 
 
 void
-dynstr_free(struct dynstr_t *dstr)
+dynstr_free(struct dynstr *dstr)
 {
 	if (dstr != NULL)
 		free(dstr->str);
@@ -23,7 +23,7 @@ dynstr_free(struct dynstr_t *dstr)
 
 
 void
-dynstr_set_empty(struct dynstr_t *dstr)
+dynstr_set_empty(struct dynstr *dstr)
 {
 	dstr->len = 0;
 	dstr->str[0] = '\0';
@@ -31,7 +31,7 @@ dynstr_set_empty(struct dynstr_t *dstr)
 
 
 void
-dynstr_add(struct dynstr_t *dstr, char c)
+dynstr_add(struct dynstr *dstr, char c)
 {
 	dstr->str[(dstr->len)++] = c;
 	if (dstr->len == dstr->size) {
@@ -43,7 +43,7 @@ dynstr_add(struct dynstr_t *dstr, char c)
 
 
 void
-dynstr_concat(struct dynstr_t *dstr, const char *s)
+dynstr_concat(struct dynstr *dstr, const char *s)
 {
 	size_t i;
 
@@ -55,7 +55,7 @@ dynstr_concat(struct dynstr_t *dstr, const char *s)
 
 
 void
-dynstr_optsize(struct dynstr_t *dstr)
+dynstr_optsize(struct dynstr *dstr)
 {
 	dstr->size = dstr->len + 1;
 	dstr->str = realloc(dstr->str, dstr->size * sizeof(char));
@@ -63,7 +63,7 @@ dynstr_optsize(struct dynstr_t *dstr)
 
 
 char*
-dynstr_str_new(struct dynstr_t *dstr)
+dynstr_str_new(struct dynstr *dstr)
 {
 	char *str;
 	size_t i;
@@ -76,7 +76,7 @@ dynstr_str_new(struct dynstr_t *dstr)
 
 
 char*
-dynstr_substr_new(struct dynstr_t *dstr, size_t offt, size_t len)
+dynstr_substr_new(struct dynstr *dstr, size_t offt, size_t len)
 {
 	char *substr;
 	size_t i;

@@ -9,7 +9,7 @@
                                 ((oldsize) + DYNARR_BLOCKSIZE): \
                                 ((oldsize) << 1)
 
-struct dynarr_t {
+struct dynarr {
 	void **arr;
 	size_t size;
 	size_t len;
@@ -17,28 +17,28 @@ struct dynarr_t {
 };
 
 void
-dynarr_init(struct dynarr_t *);
+dynarr_init(struct dynarr *);
 
 void
-dynarr_free(struct dynarr_t *);
+dynarr_free(struct dynarr *);
 
 void
-dynarr_clean(struct dynarr_t *);
+dynarr_clean(struct dynarr *);
 
 void
-dynarr_set_empty(struct dynarr_t *);
+dynarr_set_empty(struct dynarr *);
 
 void
-dynarr_add(struct dynarr_t *, void *);
+dynarr_add(struct dynarr *, void *);
 
 void
-dynarr_concat(struct dynarr_t *, void **);
+dynarr_concat(struct dynarr *, void **);
 
 ssize_t
-dynarr_find(struct dynarr_t *, void *);
+dynarr_find(struct dynarr *, void *);
 
 void
-dynarr_optsize(struct dynarr_t *);
+dynarr_optsize(struct dynarr *);
 
 void
 dynarr_free_none(void *);

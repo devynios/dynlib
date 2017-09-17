@@ -10,7 +10,7 @@ dynarr_free_none(void *e)
 
 
 void
-dynarr_init(struct dynarr_t *darr)
+dynarr_init(struct dynarr *darr)
 {
 	if (darr == NULL)
 		return;
@@ -23,7 +23,7 @@ dynarr_init(struct dynarr_t *darr)
 
 
 void
-dynarr_free(struct dynarr_t *darr)
+dynarr_free(struct dynarr *darr)
 {
 	size_t i;
 
@@ -36,7 +36,7 @@ dynarr_free(struct dynarr_t *darr)
 
 
 void
-dynarr_clean(struct dynarr_t *darr)
+dynarr_clean(struct dynarr *darr)
 {
 	while (darr->len > 0)
 		darr->free(darr->arr[--(darr->len)]);
@@ -45,7 +45,7 @@ dynarr_clean(struct dynarr_t *darr)
 
 
 void
-dynarr_set_empty(struct dynarr_t *darr)
+dynarr_set_empty(struct dynarr *darr)
 {
 	darr->len = 0;
 	darr->arr[0] = NULL;
@@ -53,7 +53,7 @@ dynarr_set_empty(struct dynarr_t *darr)
 
 
 void
-dynarr_add(struct dynarr_t *darr, void *e)
+dynarr_add(struct dynarr *darr, void *e)
 {
 	darr->arr[(darr->len)++] = e;
 	if (darr->len == darr->size) {
@@ -65,7 +65,7 @@ dynarr_add(struct dynarr_t *darr, void *e)
 
 
 void
-dynarr_concat(struct dynarr_t *darr, void **e)
+dynarr_concat(struct dynarr *darr, void **e)
 {
 	size_t i;
 
@@ -77,7 +77,7 @@ dynarr_concat(struct dynarr_t *darr, void **e)
 
 
 ssize_t
-dynarr_find(struct dynarr_t *darr, void *e)
+dynarr_find(struct dynarr *darr, void *e)
 {
 	size_t i;
 
@@ -89,7 +89,7 @@ dynarr_find(struct dynarr_t *darr, void *e)
 
 
 void
-dynarr_optsize(struct dynarr_t *darr)
+dynarr_optsize(struct dynarr *darr)
 {
 	darr->size = darr->len + 1;
 	darr->arr = realloc(darr->arr, darr->size * sizeof(void*));

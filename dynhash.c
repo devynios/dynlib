@@ -65,12 +65,12 @@ dynhash_free_none(void *e)
 
 
 void
-dynhash_init(struct dynhash_t *dh)
+dynhash_init(struct dynhash *dh)
 {
 	if (dh == NULL)
 		return;
 	dh->size = DYNHASH_INITSIZE;
-	dh->arr = calloc(dh->size, sizeof(struct dynhash_elem_t));
+	dh->arr = calloc(dh->size, sizeof(struct dynhash_elem));
 	dh->len = 0;
 #if 0
 	dh->keyofft = 0;
@@ -83,7 +83,7 @@ dynhash_init(struct dynhash_t *dh)
 
 
 void
-dynhash_free(struct dynhash_t *dh)
+dynhash_free(struct dynhash *dh)
 {
 	size_t i;
 
@@ -97,9 +97,9 @@ dynhash_free(struct dynhash_t *dh)
 
 
 void
-dynhash_resize(struct dynhash_t *dh, size_t size)
+dynhash_resize(struct dynhash *dh, size_t size)
 {
-	struct dynhash_elem_t *arr = calloc(size, sizeof(struct dynhash_elem_t));
+	struct dynhash_elem *arr = calloc(size, sizeof(struct dynhash_elem));
 	size_t i, j;
 
 	if (size <= dh->size)
@@ -121,11 +121,11 @@ dynhash_resize(struct dynhash_t *dh, size_t size)
 
 
 void
-dynhash_add(struct dynhash_t *dh, void *key, void *val)
+dynhash_add(struct dynhash *dh, void *key, void *val)
 {
 	unsigned h = dh->hash(key);
 	size_t i;
-	struct dynhash_elem_t *e;
+	struct dynhash_elem *e;
 
 	if (DYNHASH_RESIZE_NEEDED(dh))
 		dynhash_resize(dh, dh->size << 1);
@@ -147,11 +147,11 @@ dynhash_add(struct dynhash_t *dh, void *key, void *val)
 
 
 void *
-dynhash_get_val(struct dynhash_t *dh, const void *key)
+dynhash_get_val(struct dynhash *dh, const void *key)
 {
 	unsigned h;
 	size_t i;
-	struct dynhash_elem_t *e;
+	struct dynhash_elem *e;
 
 	if (key == NULL)
 		return NULL;
