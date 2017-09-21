@@ -72,13 +72,10 @@ dynhash_init(struct dynhash *dh)
 	dh->size = DYNHASH_INITSIZE;
 	dh->arr = calloc(dh->size, sizeof(struct dynhash_elem *));
 	dh->len = 0;
-#if 0
-	dh->keyofft = 0;
-	dh->maxcol = 0;
-#endif
-	dh->free = &dynhash_free_none;
 	dh->hash = &dynhash_hash_djb;
 	dh->cmp = &strcmp;
+	dh->freekey = &dynhash_free_none;
+	dh->freeval = &dynhash_free_none;
 }
 
 
@@ -93,7 +90,8 @@ dynhash_free(struct dynhash *dh)
 	for (i = 0; i < dh->size; ++i) {
 		if ((e = dh->arr[i]) == NULL)
 			continue;
-		dh->free(e->val); /* TODO: free(key) */
+		dh->freekey(e->key);
+		dh->freeval(e->val);
 		free(e);
 	}
 	free(dh->arr);
@@ -134,15 +132,16 @@ dynhash_add(struct dynhash *dh, void *key, void *val)
 	i = h % dh->size;
 	while ((e = dh->arr[i]) != NULL) {
 		if ((e->hash == h) && (dh->cmp(e->key, key) == 0)) {
-			dh->free(e->val);
+			dh->freekey(e->key);
+			dh->freeval(e->val);
+			e->key = key;
 			e->val = val;
-			/* TODO: free(key) */
 			return;
 		}
 		i = (i + DYNHASH_STEP) % dh->size;
 	}
 	e = malloc(sizeof(struct dynhash_elem *));
-	e->key = key; /* TODO: free(e->key) */
+	e->key = key;
 	e->val = val;
 	e->hash = h;
 	dh->arr[i] = e;
@@ -150,17 +149,69 @@ dynhash_add(struct dynhash *dh, void *key, void *val)
 }
 
 
-void *
-dynhash_get_val(struct dynhash *dh, const void *key)
+static int
+dynhash_between(size_t i, size_t ifirst, size_t ilast)
+{
+	/* FIXME: do not assume that DYNHASH_STEP == 1 */
+	if (ifirst < ilast)
+		return (i > ifirst && i < ilast);
+	return (i > ifirst || i < ilast);
+}
+
+
+static void
+dynhash_fill_gap(struct dynhash *dh, size_t igap)
+{
+	size_t iend = (igap + DYNHASH_STEP) % dh->size;
+	size_t i;
+
+	/* assert(dh->arr[igap] == NULL) */
+	while (dh->arr[iend] != NULL)
+		iend = (iend + DYNHASH_STEP) % dh->size;
+	i = iend;
+	while ((i = (i - DYNHASH_STEP) % dh->size) != igap) {
+		if (dynhash_between(dh->arr[i]->hash % dh->size, igap, iend))
+			continue;
+		dh->arr[igap] = dh->arr[i];
+		dh->arr[i] = NULL;
+		igap = i;
+		i = iend;
+	}
+}
+
+
+void
+dynhash_rm(struct dynhash *dh, const void *key)
 {
 	unsigned long h;
 	size_t i;
 	struct dynhash_elem *e;
 
-	if (key == NULL)
-		return NULL;
 	h = dh->hash(key);
 	i = h % dh->size;
+	/* FIXME: possible infinite loop */
+	while ((e = dh->arr[i]) != NULL) {
+		if ((e->hash == h) && (dh->cmp(e->key, key) == 0)) {
+			dh->freekey(e->key);
+			dh->freeval(e->val);
+			free(e);
+			dh->arr[i] = NULL;
+			--dh->len;
+			dynhash_fill_gap(dh, i);
+			return;
+		}
+		i = (i + DYNHASH_STEP) % dh->size;
+	}
+}
+
+
+void *
+dynhash_get_val(struct dynhash *dh, const void *key)
+{
+	unsigned long h = dh->hash(key);
+	size_t i = h % dh->size;
+	struct dynhash_elem *e;
+
 	/* FIXME: possible infinite loop */
 	while ((e = dh->arr[i]) != NULL) {
 		if ((e->hash == h) && (dh->cmp(e->key, key) == 0))

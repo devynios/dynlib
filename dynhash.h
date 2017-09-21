@@ -27,12 +27,9 @@ struct dynhash {
 	size_t size;
 	size_t len;
 	long (*hash)(const void *);
-	void (*free)(void *);
 	int (*cmp)(const void *, const void *);
-#if 0
-	void *keyofft;
-	size_t maxcol;
-#endif
+	void (*freekey)(void *);
+	void (*freeval)(void *);
 };
 
 void
@@ -46,6 +43,9 @@ dynhash_resize(struct dynhash *, size_t);
 
 void
 dynhash_add(struct dynhash *, void *, void *);
+
+void
+dynhash_rm(struct dynhash *, const void *);
 
 void *
 dynhash_get_val(struct dynhash *, const void *);
