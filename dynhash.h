@@ -1,5 +1,5 @@
-#ifndef dynhash_h_
-#define dynhash_h_
+#ifndef dynhash_h__
+#define dynhash_h__
 
 #define DYNHASH_INITSIZE 64
 #define DYNHASH_STEP 1
@@ -50,4 +50,4 @@ dynhash_rm(struct dynhash *, const void *);
 void *
 dynhash_get_val(struct dynhash *, const void *);
 
-#endif /* dynhash_h_ */
+#endif /* dynhash_h__ */

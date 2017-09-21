@@ -15,7 +15,7 @@ dynarr_init(struct dynarr *darr)
 	if (darr == NULL)
 		return;
 	darr->size = DYNARR_INITSIZE;
-	darr->arr = malloc(darr->size * sizeof(void*));
+	darr->arr = malloc(darr->size * sizeof(void *));
 	darr->len = 0;
 	darr->arr[0] = NULL;
 	darr->free = &dynarr_free_none;
@@ -58,7 +58,7 @@ dynarr_add(struct dynarr *darr, void *e)
 	darr->arr[(darr->len)++] = e;
 	if (darr->len == darr->size) {
 		darr->size = DYNARR_NEWSIZE(darr->size);
-		darr->arr = realloc(darr->arr, darr->size * sizeof(void*));
+		darr->arr = realloc(darr->arr, darr->size * sizeof(void *));
 	}
 	darr->arr[darr->len] = NULL;
 }
@@ -92,5 +92,5 @@ void
 dynarr_optsize(struct dynarr *darr)
 {
 	darr->size = darr->len + 1;
-	darr->arr = realloc(darr->arr, darr->size * sizeof(void*));
+	darr->arr = realloc(darr->arr, darr->size * sizeof(void *));
 }

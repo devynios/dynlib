@@ -1,5 +1,5 @@
-#ifndef dynarr_h_
-#define dynarr_h_
+#ifndef dynarr_h__
+#define dynarr_h__
 
 #include <sys/types.h>
 
@@ -43,4 +43,4 @@ dynarr_optsize(struct dynarr *);
 void
 dynarr_free_none(void *);
 
-#endif /* dynarr_h_ */
+#endif /* dynarr_h__ */

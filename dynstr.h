@@ -1,5 +1,5 @@
-#ifndef dynstr_h_
-#define dynstr_h_
+#ifndef dynstr_h__
+#define dynstr_h__
 
 #define DYNSTR_INITSIZE 32
 #define DYNSTR_BLOCKSIZE 4096
@@ -31,10 +31,10 @@ dynstr_concat(struct dynstr *, const char *);
 void
 dynstr_optsize(struct dynstr *);
 
-char*
+char *
 dynstr_str_new(struct dynstr *);
 
-char*
+char *
 dynstr_substr_new(struct dynstr *, size_t, size_t);
 
-#endif /* dynstr_h_ */
+#endif /* dynstr_h__ */

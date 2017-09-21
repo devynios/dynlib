@@ -62,7 +62,7 @@ dynstr_optsize(struct dynstr *dstr)
 }
 
 
-char*
+char *
 dynstr_str_new(struct dynstr *dstr)
 {
 	char *str;
@@ -75,7 +75,7 @@ dynstr_str_new(struct dynstr *dstr)
 }
 
 
-char*
+char *
 dynstr_substr_new(struct dynstr *dstr, size_t offt, size_t len)
 {
 	char *substr;
