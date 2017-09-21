@@ -5,9 +5,9 @@
 
 #define DYNARR_INITSIZE 16
 #define DYNARR_BLOCKSIZE 1024
-#define DYNARR_NEWSIZE(oldsize) ((oldsize) > DYNARR_BLOCKSIZE)? \
-                                ((oldsize) + DYNARR_BLOCKSIZE): \
-                                ((oldsize) << 1)
+#define DYNARR_NEWSIZE(oldsize) ((oldsize) > DYNARR_BLOCKSIZE? \
+                                 (oldsize) + DYNARR_BLOCKSIZE: \
+                                 (oldsize) << 1)
 
 struct dynarr {
 	void **arr;
@@ -32,10 +32,13 @@ void
 dynarr_add(struct dynarr *, void *);
 
 void
-dynarr_concat(struct dynarr *, void **);
+dynarr_add_array(struct dynarr *, void **);
 
 ssize_t
 dynarr_find(struct dynarr *, void *);
+
+void
+dynarr_rm(struct dynarr *, ssize_t);
 
 void
 dynarr_optsize(struct dynarr *);

@@ -31,7 +31,7 @@ dynstr_set_empty(struct dynstr *dstr)
 
 
 void
-dynstr_add(struct dynstr *dstr, char c)
+dynstr_add_char(struct dynstr *dstr, char c)
 {
 	dstr->str[(dstr->len)++] = c;
 	if (dstr->len == dstr->size) {
@@ -43,14 +43,114 @@ dynstr_add(struct dynstr *dstr, char c)
 
 
 void
-dynstr_concat(struct dynstr *dstr, const char *s)
+dynstr_add(struct dynstr *dstr, const char *s)
 {
 	size_t i;
 
 	if (s == NULL)
 		return;
 	for (i = 0; s[i] != '\0'; ++i)
-		dynstr_add(dstr, s[i]);
+		dynstr_add_char(dstr, s[i]);
+}
+
+
+static void
+dynstr_swapchar(char *str, size_t n)
+{
+	size_t i = 0;
+	char t;
+
+	/* assert n > 0 */
+	--n;
+	while (i < n) {
+		t = str[i];
+		str[i++] = str[n];
+		str[n--] = t;
+	}
+}
+
+
+void
+dynstr_add_int(struct dynstr *dstr, int n)
+{
+	size_t k = dstr->len;
+
+	if (n < 0) {
+		dynstr_add_char(dstr, '-');
+		n = -n;
+	}
+	do {
+		dynstr_add_char(dstr, '0' + (char) (n % 10));
+	} while ((n /= 10) != 0);
+
+	dynstr_swapchar(dstr->str + k, dstr->len - k);
+}
+
+
+void
+dynstr_add_date(struct dynstr *dstr, const struct tm *tm)
+{
+	char s[11];
+	size_t i;
+
+	if (tm == NULL)
+		return;
+	if (strftime(s, 11, "%Y-%m-%d", tm) == 0)
+		return;
+	for (i = 0; s[i] != '\0'; ++i)
+		dynstr_add_char(dstr, s[i]);
+}
+
+
+void
+dynstr_add_datetime(struct dynstr *dstr, const struct tm *tm)
+{
+	char s[20];
+	size_t i;
+
+	if (tm == NULL)
+		return;
+	if (strftime(s, 20, "%Y-%m-%d %H:%M:%S", tm) == 0)
+		return;
+	for (i = 0; s[i] != '\0'; ++i)
+		dynstr_add_char(dstr, s[i]);
+}
+
+
+void
+dynstr_add_char_xmlesc(struct dynstr *dstr, char c)
+{
+	switch (c) {
+	case '<':
+		dynstr_add(dstr, "&lt;");
+		break;
+	case '>':
+		dynstr_add(dstr, "&gt;");
+		break;
+	case '&':
+		dynstr_add(dstr, "&amp;");
+		break;
+	case '"':
+		dynstr_add(dstr, "&quot;");
+		break;
+	case '\'':
+		dynstr_add(dstr, "&apos;");
+		break;
+	default:
+		dynstr_add_char(dstr, c);
+	}
+}
+
+
+void
+dynstr_add_xmlesc(struct dynstr *dstr, const char *s)
+{
+	size_t i;
+
+	if (s == NULL)
+		return;
+	for (i = 0; s[i] != '\0'; ++i)
+		dynstr_add_char_xmlesc(dstr, s[i]);
 }
 
 

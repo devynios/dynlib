@@ -65,7 +65,7 @@ dynarr_add(struct dynarr *darr, void *e)
 
 
 void
-dynarr_concat(struct dynarr *darr, void **e)
+dynarr_add_array(struct dynarr *darr, void **e)
 {
 	size_t i;
 
@@ -85,6 +85,20 @@ dynarr_find(struct dynarr *darr, void *e)
 		if (darr->arr[i] == e)
 			return i;
 	return -1;
+}
+
+
+void
+dynarr_rm(struct dynarr *darr, ssize_t k)
+{
+	size_t i;
+
+	if (k < 0)
+		return;
+	darr->free(darr->arr[k]);
+	for (i = k; i < darr->len; ++i)
+		darr->arr[i] = darr->arr[i + 1];
+	--(darr->len);
 }
 
 
