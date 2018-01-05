@@ -140,7 +140,7 @@ dynhash_add(struct dynhash *dh, void *key, void *val)
 		}
 		i = (i + DYNHASH_STEP) % dh->size;
 	}
-	e = malloc(sizeof(struct dynhash_elem *));
+	e = malloc(sizeof(struct dynhash_elem));
 	e->key = key;
 	e->val = val;
 	e->hash = h;
