@@ -43,14 +43,22 @@ dynstr_add_char(struct dynstr *dstr, char c)
 
 
 void
-dynstr_add(struct dynstr *dstr, const char *s)
+dynstr_add_chararr(struct dynstr *dstr, const char *s, size_t len)
 {
 	size_t i;
 
+	for (i = 0; i < len; ++i)
+		dynstr_add_char(dstr, s[i]);
+}
+
+
+void
+dynstr_add(struct dynstr *dstr, const char *s)
+{
 	if (s == NULL)
 		return;
-	for (i = 0; s[i] != '\0'; ++i)
-		dynstr_add_char(dstr, s[i]);
+	while (*s != '\0')
+		dynstr_add_char(dstr, *s++);
 }
 
 
@@ -78,6 +86,7 @@ dynstr_add_int(struct dynstr *dstr, int n)
 	if (n < 0) {
 		dynstr_add_char(dstr, '-');
 		n = -n;
+		++k;
 	}
 	do {
 		dynstr_add_char(dstr, '0' + (char) (n % 10));

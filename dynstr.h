@@ -29,6 +29,9 @@ void
 dynstr_add_char(struct dynstr *, char);
 
 void
+dynstr_add_chararr(struct dynstr *, const char *, size_t);
+
+void
 dynstr_add(struct dynstr *, const char *);
 
 void
